@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5. 水の通り道 ○×クイズ | 中学理科Web学習</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Noto Sans JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        botanical: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        science: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans JP"', '"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+        }
+        .gradient-header {
+            background: linear-gradient(135deg, #15803d 0%, #0369a1 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        }
+        .btn-bounce:active {
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between selection:bg-emerald-200">
+
+    <!-- Header / Navbar -->
+    <header class="gradient-header text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 sm:px-6 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/20 p-2.5 rounded-2xl backdrop-blur-md">
+                    <i class="fa-solid fa-seedling text-2xl text-emerald-300"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-emerald-200 block">中学理科 2年 単元2</span>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">5. 水の通り道 <span class="text-sm font-normal text-emerald-100 hidden sm:inline">○×チェック</span></h1>
+                </div>
+            </div>
+            <!-- Header Stats -->
+            <div class="flex items-center space-x-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-xl text-sm border border-white/20">
+                <i class="fa-solid fa-trophy text-amber-300"></i>
+                <span class="font-bold" id="headerScore">0 / 18</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-6 sm:px-6 flex-grow w-full">
+
+        <!-- Banner & Progress Overview -->
+        <section class="bg-white rounded-2xl p-5 mb-6 card-shadow border border-slate-100">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open text-emerald-600"></i> 教科書理解度チェッカー (p.120〜125)
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">
+                        「★☆☆ 表層構造」「★★☆ テキストベース」「★★★ 状況モデル」の3段階で知識をステップアップ！
+                    </p>
+                </div>
+                <!-- Filter Buttons -->
+                <div class="flex flex-wrap gap-1.5" id="filterContainer">
+                    <button onclick="setFilter('all')" class="filter-btn active text-xs font-bold px-3 py-1.5 rounded-lg border transition bg-emerald-600 text-white border-emerald-600" data-filter="all">すべて</button>
+                    <button onclick="setFilter('1')" class="filter-btn text-xs font-medium px-3 py-1.5 rounded-lg border bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100" data-filter="1">★1 (表層)</button>
+                    <button onclick="setFilter('2')" class="filter-btn text-xs font-medium px-3 py-1.5 rounded-lg border bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100" data-filter="2">★2 (文脈)</button>
+                    <button onclick="setFilter('3')" class="filter-btn text-xs font-medium px-3 py-1.5 rounded-lg border bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100" data-filter="3">★3 (応用)</button>
+                    <button onclick="setFilter('wrong')" class="filter-btn text-xs font-medium px-3 py-1.5 rounded-lg border bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100" data-filter="wrong"><i class="fa-solid fa-circle-xmark mr-1"></i>復習のみ</button>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="space-y-1.5">
+                <div class="flex justify-between text-xs font-semibold text-slate-600">
+                    <span>回答進捗率: <span id="progressPercent">0%</span></span>
+                    <span>正解数: <span id="correctCountText" class="text-emerald-600 font-bold">0</span> / <span id="totalCountText">18</span></span>
+                </div>
+                <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden flex">
+                    <div id="progressBarCorrect" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
+                    <div id="progressBarWrong" class="bg-rose-400 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+        </section>
+
+        <div class="flex items-center justify-between mb-4">
+            <div class="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <span id="currentFilterLabel" class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">全問題</span>
+                <span class="text-xs text-slate-400 font-normal">※教科書のページ順になっています</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="resetAllQuiz()" class="text-xs text-slate-500 hover:text-rose-600 transition flex items-center gap-1 px-2 py-1 rounded">
+                    <i class="fa-solid fa-rotate-right"></i> リセット
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz List Container -->
+        <div id="quizContainer" class="space-y-4">
+            <!-- Questions rendered via Javascript -->
+        </div>
+
+        <!-- Empty State for Filters -->
+        <div id="emptyState" class="hidden text-center py-12 bg-white rounded-2xl border border-dashed border-slate-300 my-4">
+            <i class="fa-solid fa-clipboard-check text-4xl text-slate-300 mb-3"></i>
+            <p class="text-slate-600 font-bold">該当する問題がありません</p>
+            <p class="text-xs text-slate-400 mt-1">フィルターを変更するか、問題を解答してみてください。</p>
+        </div>
+
+        <!-- Score Summary Card (Visible when all questions answered) -->
+        <section id="summaryCard" class="hidden mt-8 bg-gradient-to-br from-slate-900 to-emerald-950 text-white rounded-3xl p-6 sm:p-8 card-shadow text-center relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 text-emerald-500/10 text-9xl">
+                <i class="fa-solid fa-award"></i>
+            </div>
+            <span class="inline-block bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold px-3 py-1 rounded-full mb-3">全問題チャレンジ完了！</span>
+            <h3 class="text-2xl sm:text-3xl font-extrabold mb-2">おつかれさまでした！</h3>
+            <p class="text-slate-300 text-sm max-w-md mx-auto mb-6">教科書「5. 水の通り道」の読解チェックが終了しました。</p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-lg mx-auto mb-6 text-slate-800">
+                <div class="bg-white/90 rounded-2xl p-3 backdrop-blur-sm">
+                    <div class="text-xs text-slate-500 font-bold">正解数</div>
+                    <div class="text-2xl font-black text-emerald-600" id="finalScoreText">15/15</div>
+                </div>
+                <div class="bg-white/90 rounded-2xl p-3 backdrop-blur-sm">
+                    <div class="text-xs text-slate-500 font-bold">正答率</div>
+                    <div class="text-2xl font-black text-science-600" id="finalAccuracyText">100%</div>
+                </div>
+                <div class="bg-white/90 rounded-2xl p-3 backdrop-blur-sm col-span-2 sm:col-span-1">
+                    <div class="text-xs text-slate-500 font-bold">ランク</div>
+                    <div class="text-lg font-black text-amber-500" id="finalRankText">理科マスター！</div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-3">
+                <button onclick="filterWrongOnly()" class="bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm px-5 py-2.5 rounded-xl transition btn-bounce flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i> 間違えた問題を復習
+                </button>
+                <button onclick="resetAllQuiz()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-5 py-2.5 rounded-xl transition btn-bounce flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> もう一度最初から
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-100 border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-4xl mx-auto px-4 space-y-2">
+            <p class="font-medium">中学理科2年「5. 水の通り道」（教科書 p.120〜125 準拠）</p>
+            <p class="text-slate-400">表層構造 (★☆☆) ・ テキストベース (★★☆) ・ 状況モデル (★★★) 対応学習アプリ</p>
+        </div>
+    </footer>
+
+    <script>
+        // Quiz Dataset based on Textbook p.120-125
+        const quizData = [
+            {
+                id: 1,
+                page: "p.120 下段",
+                level: 1,
+                levelLabel: "★☆☆ レベル1 (表層構造)",
+                question: "p.120下段によると、今回の問いは「植物のからだはどのような細胞が集まってできているのだろうか」「水はどの部分を通っているのだろうか」である。",
+                answer: true,
+                explanation: "教科書p.120下段記載の通り、今回の主な問いです。"
+            },
+            {
+                id: 2,
+                page: "p.120 図2",
+                level: 2,
+                levelLabel: "★★☆ レベル2 (テキストベース)",
+                question: "p.120の図２によると、葉の表側には葉肉細胞が集まった葉肉組織があり、これは葉の内側の組織を守っている。",
+                answer: false,
+                explanation: "×（葉の内側の組織を守っているのは「表皮組織（表皮細胞）」です。葉肉組織の葉肉細胞は、活発に光合成を行っています。）"
+            },
+            {
+                id: 3,
+                page: "p.122 図1",
+                level: 1,
+                levelLabel: "★☆☆ レベル1 (表層構造)",
+                question: "p.122の図１はツバキの葉の断面を表している。",
+                answer: true,
+                explanation: "教科書p.122図1記載の通り、ツバキの葉の断面の構造を示しています。"
+            },
+            {
+                id: 4,
+                page: "p.122 中段",
+                level: 1,
+                levelLabel: "★☆☆ レベル1 (表層構造)",
+                question: "p.122中段によると、葉脈の部分には管のようなものが集まっており、この管の集まりは葉脈束と呼ばれる。",
+                answer: false,
+                explanation: "×（「葉脈束」ではなく、「維管束（いかんそく）」と呼ばれます。）"
+            },
+            {
+                id: 5,
+                page: "p.122-123 実験目的",
+                level: 3,
+                levelLabel: "★★★ レベル3 (状況モデル)",
+                question: "「水の通り道はどこを通っているのだろうか」という問いに答えるために、色水を吸わせると、色水が通ったところに色がつくため、水の通り道がどこかを観察することができる。",
+                answer: true,
+                explanation: "無色の水では通り道が分からないため、色水で着色して水が通過した場所（道管）を特定・観察します。"
+            },
+            {
+                id: 6,
+                page: "p.122-123 実験手順",
+                level: 2,
+                levelLabel: "★★☆ レベル2 (テキストベース)",
+                question: "p.122～123の実験を要約すると、<br>【ステップ①】色水を植物の根から２～３時間吸わせる<br>【ステップ②】葉の断面を観察し、どの部分が染まっているか確認する。<br>【ステップ③】茎の断面を観察し、どの部分が染まっているか確認する。<br>である。",
+                answer: true,
+                explanation: "教科書p.122〜123の実験手順の通りです。"
+            },
+            {
+                id: 7,
+                page: "p.124 上図",
+                level: 2,
+                levelLabel: "★★☆ レベル2 (テキストベース)",
+                question: "p.124の上図は、トウモロコシとヒマワリの観察結果で、赤く染まっている部分がある。",
+                answer: true,
+                explanation: "教科書p.124上図の観察結果の通りです。"
+            },
+            {
+                id: 8,
+                page: "p.124 中段",
+                level: 1,
+                levelLabel: "★☆☆ レベル1 (表層構造)",
+                question: "p.124中段によると、染色された部分は、根から吸収された水や、水にとけた肥料分などの通り道で道管という。",
+                answer: true,
+                explanation: "教科書p.124中段の記載の通りです。"
+            },
+            {
+                id: 9,
+                page: "p.124 根のはたらき",
+                level: 1,
+                levelLabel: "★☆☆ レベル1 (表層構造)",
+                question: "根のはたらきは、油や油にとけた肥料分を吸収することである。",
+                answer: false,
+                explanation: "×（「油」ではなく「水」および水にとけた肥料分を吸収します。）"
+            },
+            {
+                id: 10,
+                page: "p.124 根毛",
+                level: 2,
+                levelLabel: "★★☆ レベル2 (テキストベース)",
+                question: "植物に根毛があるのは、それによって根の表面積が広がり、水や、水にとけた肥料分を効率よくとりこむことができるからだ。",
+                answer: true,
+                explanation: "根毛があることで土と触れ合う表面積が大きくなり、水や肥料分を効率よく吸収できます。"
+            },
+            {
+                id: 11,
+                page: "p.124 下段",
+                level: 1,
+                levelLabel: "★☆☆ レベル1 (表層構造)",
+                question: "p.124下段によると、維管束には道管と並んで師管という管がとおっている。",
+                answer: true,
+                explanation: "教科書p.124下段記載の通り、維管束には道管と師管が並んで通っています。"
+            },
+            {
+                id: 12,
+                page: "p.124 下段",
+                level: 2,
+                levelLabel: "★★☆ レベル2 (テキストベース)",
+                question: "p.124下段によると、光合成でつくられたデンプンなどの養分は、道管を通ってからだ全体の細胞に運ばれる。",
+                answer: false,
+                explanation: "×（「道管」ではなく「師管」を通って運ばれます。）"
+            },
+            {
+                id: 13,
+                page: "p.124 師管の役割",
+                level: 3,
+                levelLabel: "★★★ レベル3 (状況モデル)",
+                question: "師管の役割は、土の中にある養分を運ぶことである。",
+                answer: false,
+                explanation: "×（土の中にある養分（肥料分）を運ぶのは「道管」です。師管は葉の光合成等によって「体内でつくられた養分」を全身へ運ぶ役割を持ちます。）"
+            },
+            {
+                id: 14,
+                page: "p.124 維管束のつながり",
+                level: 3,
+                levelLabel: "★★★ レベル3 (状況モデル)",
+                question: "維管束は根には無い。",
+                answer: false,
+                explanation: "×（維管束は根、茎、葉まで途切れることなくつながっています。）"
+            },
+            {
+                id: 15,
+                page: "p.125 中段",
+                level: 1,
+                levelLabel: "★☆☆ レベル1 (表層構造)",
+                question: "p.125中段によると、茎の維管束には、骨組みとなって植物の体を支えるはたらきもある。",
+                answer: true,
+                explanation: "教科書p.125中段に明記されている通り、物質の運搬だけでなく体を支える骨組みとしての役割もあります。"
+            },
+            {
+                id: 16,
+                page: "p.124 植物の分類",
+                level: 3,
+                levelLabel: "★★★ レベル3 (状況モデル)",
+                question: "トウモロコシは双子葉類である。",
+                answer: false,
+                explanation: "×（トウモロコシは「単子葉類」です。ヒマワリが双子葉類にあたります。）"
+            },
+            {
+                id: 17,
+                page: "p.124 上図写真",
+                level: 2,
+                levelLabel: "★★☆ レベル2 (テキストベース)",
+                question: "p.124の上の写真からわかるように、トウモロコシは赤く染まっている部分が茎の全体に散らばっている。一方、ヒマワリは赤く染まっている部分が茎の周辺部に輪のような形で並んでいる。",
+                answer: true,
+                explanation: "単子葉類（トウモロコシ）は維管束が散在し、双子葉類（ヒマワリ）は輪状に並びます。"
+            },
+            {
+                id: 18,
+                page: "p.124 上図写真",
+                level: 3,
+                levelLabel: "★★★ レベル3 (状況モデル)",
+                question: "p.124の上の写真では、赤く染まった部分が維管束である。",
+                answer: true,
+                explanation: "赤く染まっているのは維管束内の道管であり、赤く染まった部分の位置が維管束を示しています。"
+            }
+        ];
+
+        // User State Variables
+        let userAnswers = {}; // { questionId: { answered: boolean, choice: boolean, isCorrect: boolean } }
+        let currentFilter = 'all';
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            renderQuizList();
+            updateStats();
+        });
+
+        // Set Filter
+        function setFilter(filter) {
+            currentFilter = filter;
+            
+            // Update filter button UI
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.filter === filter) {
+                    btn.className = "filter-btn active text-xs font-bold px-3 py-1.5 rounded-lg border transition bg-emerald-600 text-white border-emerald-600 shadow-sm";
+                } else {
+                    if (btn.dataset.filter === 'wrong') {
+                        btn.className = "filter-btn text-xs font-medium px-3 py-1.5 rounded-lg border bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100";
+                    } else {
+                        btn.className = "filter-btn text-xs font-medium px-3 py-1.5 rounded-lg border bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100";
+                    }
+                }
+            });
+
+            // Update Label
+            const labelMap = {
+                'all': '全問題',
+                '1': '★☆☆ レベル1 (表層理解)',
+                '2': '★★☆ レベル2 (テキストベース)',
+                '3': '★★★ レベル3 (状況モデル)',
+                'wrong': '要復習問題（不正解）'
+            };
+            document.getElementById('currentFilterLabel').innerText = labelMap[filter] || '全問題';
+
+            renderQuizList();
+        }
+
+        // Render Question Cards
+        function renderQuizList() {
+            const container = document.getElementById('quizContainer');
+            const emptyState = document.getElementById('emptyState');
+            container.innerHTML = '';
+
+            let filteredData = quizData.filter(item => {
+                if (currentFilter === 'all') return true;
+                if (currentFilter === '1') return item.level === 1;
+                if (currentFilter === '2') return item.level === 2;
+                if (currentFilter === '3') return item.level === 3;
+                if (currentFilter === 'wrong') {
+                    const state = userAnswers[item.id];
+                    return state && state.answered && !state.isCorrect;
+                }
+                return true;
+            });
+
+            if (filteredData.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filteredData.forEach((q) => {
+                const state = userAnswers[q.id] || { answered: false, choice: null, isCorrect: false };
+
+                // Card Styling based on status
+                let cardBorderClass = "border-slate-200 hover:border-emerald-300";
+                if (state.answered) {
+                    cardBorderClass = state.isCorrect ? "border-emerald-400 bg-emerald-50/20" : "border-rose-300 bg-rose-50/20";
+                }
+
+                // Level Badge styling
+                let levelBadgeClass = "bg-slate-100 text-slate-700 border-slate-200";
+                if (q.level === 1) levelBadgeClass = "bg-blue-50 text-blue-700 border-blue-200";
+                if (q.level === 2) levelBadgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                if (q.level === 3) levelBadgeClass = "bg-amber-50 text-amber-800 border-amber-200";
+
+                const cardHtml = `
+                    <div id="quiz-card-${q.id}" class="bg-white rounded-2xl p-5 border ${cardBorderClass} transition card-shadow">
+                        <!-- Top Meta Header -->
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-md border ${levelBadgeClass}">
+                                    ${q.levelLabel}
+                                </span>
+                                <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                                    <i class="fa-solid fa-bookmark text-emerald-600 mr-1"></i>${q.page}
+                                </span>
+                            </div>
+                            <div class="text-xs font-bold text-slate-400">
+                                問 ${q.id} / ${quizData.length}
+                            </div>
+                        </div>
+
+                        <!-- Question Text -->
+                        <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-4 leading-relaxed">
+                            ${q.question}
+                        </h3>
+
+                        <!-- Action Buttons (O / X) -->
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <button onclick="handleAnswer(${q.id}, true)" 
+                                ${state.answered ? 'disabled' : ''} 
+                                class="btn-bounce flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold border-2 transition
+                                ${getMaruBtnClass(state, true)}">
+                                <i class="fa-regular fa-circle text-xl"></i>
+                                <span>○ 正解 (正しい)</span>
+                            </button>
+
+                            <button onclick="handleAnswer(${q.id}, false)" 
+                                ${state.answered ? 'disabled' : ''} 
+                                class="btn-bounce flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold border-2 transition
+                                ${getBatsuBtnClass(state, false)}">
+                                <i class="fa-solid fa-xmark text-xl"></i>
+                                <span>× 不正解 (間違い)</span>
+                            </button>
+                        </div>
+
+                        <!-- Explanation Box (Appears after answer) -->
+                        ${state.answered ? `
+                            <div class="mt-4 p-4 rounded-xl border ${state.isCorrect ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900' : 'bg-rose-50/80 border-rose-200 text-rose-900'} transition">
+                                <div class="flex items-center gap-2 font-bold mb-1.5 text-sm sm:text-base">
+                                    ${state.isCorrect ? 
+                                        '<i class="fa-solid fa-circle-check text-emerald-600 text-xl"></i><span class="text-emerald-700">正解！</span>' : 
+                                        '<i class="fa-solid fa-circle-xmark text-rose-600 text-xl"></i><span class="text-rose-700">不正解... (正解は ' + (q.answer ? '○' : '×') + ')</span>'}
+                                </div>
+                                <p class="text-xs sm:text-sm leading-relaxed font-medium">
+                                    <span class="font-bold underline decoration-emerald-400 underline-offset-2">解説</span>：${q.explanation}
+                                </p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+
+                container.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        // Button Class Helper for Maru (O)
+        function getMaruBtnClass(state, isMaruBtn) {
+            if (!state.answered) {
+                return "border-emerald-200 bg-emerald-50/50 text-emerald-800 hover:bg-emerald-100 hover:border-emerald-400";
+            }
+            if (state.choice === true) {
+                return state.isCorrect 
+                    ? "bg-emerald-600 text-white border-emerald-600 shadow-md" 
+                    : "bg-rose-600 text-white border-rose-600 shadow-md";
+            }
+            return "border-slate-100 bg-slate-50 text-slate-300 opacity-60";
+        }
+
+        // Button Class Helper for Batsu (X)
+        function getBatsuBtnClass(state, isMaruBtn) {
+            if (!state.answered) {
+                return "border-rose-200 bg-rose-50/50 text-rose-800 hover:bg-rose-100 hover:border-rose-400";
+            }
+            if (state.choice === false) {
+                return state.isCorrect 
+                    ? "bg-emerald-600 text-white border-emerald-600 shadow-md" 
+                    : "bg-rose-600 text-white border-rose-600 shadow-md";
+            }
+            return "border-slate-100 bg-slate-50 text-slate-300 opacity-60";
+        }
+
+        // Handle Choice Selection
+        function handleAnswer(questionId, selectedChoice) {
+            const question = quizData.find(q => q.id === questionId);
+            if (!question) return;
+
+            const isCorrect = (selectedChoice === question.answer);
+            userAnswers[questionId] = {
+                answered: true,
+                choice: selectedChoice,
+                isCorrect: isCorrect
+            };
+
+            renderQuizList();
+            updateStats();
+        }
+
+        // Update Progress Bar & Overall Stats
+        function updateStats() {
+            const totalQuestions = quizData.length;
+            const answeredIds = Object.keys(userAnswers);
+            const answeredCount = answeredIds.length;
+
+            let correctCount = 0;
+            let wrongCount = 0;
+
+            answeredIds.forEach(id => {
+                if (userAnswers[id].isCorrect) {
+                    correctCount++;
+                } else {
+                    wrongCount++;
+                }
+            });
+
+            // Calculate percentages
+            const progressPct = Math.round((answeredCount / totalQuestions) * 100);
+            const correctPct = (correctCount / totalQuestions) * 100;
+            const wrongPct = (wrongCount / totalQuestions) * 100;
+
+            // DOM Updates
+            document.getElementById('headerScore').innerText = `${correctCount} / ${totalQuestions}`;
+            document.getElementById('correctCountText').innerText = correctCount;
+            document.getElementById('totalCountText').innerText = totalQuestions;
+            document.getElementById('progressPercent').innerText = `${progressPct}%`;
+
+            document.getElementById('progressBarCorrect').style.width = `${correctPct}%`;
+            document.getElementById('progressBarWrong').style.width = `${wrongPct}%`;
+
+            // Check if all answered
+            const summaryCard = document.getElementById('summaryCard');
+            if (answeredCount === totalQuestions) {
+                const accuracy = Math.round((correctCount / totalQuestions) * 100);
+                document.getElementById('finalScoreText').innerText = `${correctCount} / ${totalQuestions}`;
+                document.getElementById('finalAccuracyText').innerText = `${accuracy}%`;
+
+                // Rank Evaluation
+                let rank = "がんばった！";
+                if (accuracy >= 90) rank = "🌿 理科マスター！";
+                else if (accuracy >= 70) rank = "植物はかせ！";
+                else if (accuracy >= 50) rank = "あと一歩！";
+                document.getElementById('finalRankText').innerText = rank;
+
+                summaryCard.classList.remove('hidden');
+            } else {
+                summaryCard.classList.add('hidden');
+            }
+        }
+
+        // Reset Quiz Logic
+        function resetAllQuiz() {
+            userAnswers = {};
+            renderQuizList();
+            updateStats();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Filter wrong questions directly from summary
+        function filterWrongOnly() {
+            setFilter('wrong');
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
