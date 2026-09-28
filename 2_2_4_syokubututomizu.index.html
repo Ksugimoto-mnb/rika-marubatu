@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>単元2 第2章 4 植物と水(教p.116～119)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Noto Sans JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+        }
+        .star-rating {
+            color: #f59e0b;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen pb-16">
+
+    <header class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 sm:px-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div>
+                    <span class="inline-block bg-emerald-800 text-emerald-100 text-xs px-2.5 py-1 rounded-full font-bold mb-1">中学校 理科</span>
+                    <h1 class="text-xl sm:text-2xl font-black tracking-tight">単元2　第2章　4　植物と水(教p.116～119)</h1>
+                </div>
+                <button onclick="resetQuiz()" class="bg-white/20 hover:bg-white/30 active:scale-95 text-white text-xs sm:text-sm font-bold px-3.5 py-2 rounded-xl transition duration-200 flex items-center gap-1.5 shrink-0 shadow-sm">
+                    <i class="fa-solid fa-rotate-right"></i> 最初からやり直す
+                </button>
+            </div>
+            
+            <!-- スコア＆進捗バー -->
+            <div class="mt-4 bg-white/10 rounded-xl p-3 backdrop-blur-sm border border-white/20">
+                <div class="flex justify-between items-center text-xs sm:text-sm font-bold mb-1.5">
+                    <span id="progress-text"><i class="fa-solid fa-pen-to-square mr-1"></i> 進捗: 0 / 21問完了</span>
+                    <span id="score-text"><i class="fa-solid fa-trophy text-amber-300 mr-1"></i> 正解数: 0問 (0%)</span>
+                </div>
+                <div class="w-full bg-black/20 rounded-full h-3 overflow-hidden">
+                    <div id="progress-bar" class="bg-amber-400 h-3 rounded-full transition-all duration-300 w-0"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 mt-6">
+
+        <!-- レベルの説明 & フィルター -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 mb-6">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1">
+                <i class="fa-solid fa-layer-group"></i> 問題レベルについて
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm mb-4">
+                <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 text-emerald-900">
+                    <div class="font-bold flex items-center gap-1.5 mb-1 text-emerald-700">
+                        <span class="star-rating font-black">★☆☆</span>
+                        <span>レベル1（教科書そのまま）</span>
+                    </div>
+                    <p class="text-slate-600 text-xs">教科書の文章をそのまま使用した問題です。</p>
+                </div>
+                <div class="bg-blue-50/80 border border-blue-200 rounded-xl p-3 text-blue-900">
+                    <div class="font-bold flex items-center gap-1.5 mb-1 text-blue-700">
+                        <span class="star-rating font-black">★★☆</span>
+                        <span>レベル2（教科書いいかえ）</span>
+                    </div>
+                    <p class="text-slate-600 text-xs">要素同士を整理・要約し、知識の繋がりを確認する問題です。</p>
+                </div>
+                <div class="bg-purple-50/80 border border-purple-200 rounded-xl p-3 text-purple-900">
+                    <div class="font-bold flex items-center gap-1.5 mb-1 text-purple-700">
+                        <span class="star-rating font-black">★★★</span>
+                        <span>レベル3（教科書プラス）</span>
+                    </div>
+                    <p class="text-slate-600 text-xs">読み取りや補足知識を活用して考える応用問題です。</p>
+                </div>
+            </div>
+
+            <!-- フィルターボタン -->
+            <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100 items-center">
+                <span class="text-xs font-bold text-slate-400 mr-1"><i class="fa-solid fa-filter mr-1"></i>絞り込み:</span>
+                <button onclick="filterQuestions('all')" id="btn-filter-all" class="filter-btn active bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition shadow-sm">すべて (21)</button>
+                <button onclick="filterQuestions(1)" id="btn-filter-1" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg transition">★☆☆ レベル1</button>
+                <button onclick="filterQuestions(2)" id="btn-filter-2" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg transition">★★☆ レベル2</button>
+                <button onclick="filterQuestions(3)" id="btn-filter-3" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg transition">★★★ レベル3</button>
+            </div>
+        </section>
+
+        <div id="questions-container" class="space-y-4">
+            <!-- JavaScriptで動的に生成されます -->
+        </div>
+
+    </main>
+
+    <script>
+        // 問題データセット (全21問)
+        const quizData = [
+            {
+                id: 1,
+                level: 1,
+                question: "p.116中段によると、植物が水を吸い上げることを吸水という。",
+                answer: true,
+                explanation: "植物が根などから水を吸い上げる働きを「吸水」と呼びます。"
+            },
+            {
+                id: 2,
+                level: 1,
+                question: "p.116中段によると、植物は水を水蒸気として排出するしくみもあるが、そのはたらきは主に根で行われる。",
+                answer: false,
+                explanation: "そのはたらきは主に「根」ではなく「葉」で行われます。"
+            },
+            {
+                id: 3,
+                level: 1,
+                question: "p.116中段によると、根から吸い上げられた水が葉緑体などから水蒸気になって出ていくことを蒸散という。",
+                answer: false,
+                explanation: "「葉緑体」ではなく「気孔」から水蒸気となって出ていきます。"
+            },
+            {
+                id: 4,
+                level: 1,
+                question: "p.116中段によると、今回の問は「植物の吸水は、蒸散とどのような関係があるだろうか」である。",
+                answer: true,
+                explanation: "p.116中段には、この節での学習課題として「植物の吸水は、蒸散とどのような関係があるだろうか」と明記されています。"
+            },
+            {
+                id: 5,
+                level: 3,
+                question: "p.117の右上によると、ワセリンをぬったところは気孔からの水や空気の出入りを防ぐことができる。そのため、ワセリンをぬった部分は、蒸散ができない。",
+                answer: true,
+                explanation: "ワセリンは気孔の穴をふさぎ、水蒸気や空気の出入り（蒸散など）を遮断する役割を果たします。"
+            },
+            {
+                id: 6,
+                level: 3,
+                question: "p.117ステップ１の㋑では、葉の裏側にワセリンを塗ることで、葉の裏側では蒸散はできない。しかし、葉の表側からは蒸散することができる。",
+                answer: true,
+                explanation: "裏側のみワセリンでふさがれているため、塗られていない表側の気孔から蒸散が行われます。"
+            },
+            {
+                id: 7,
+                level: 3,
+                question: "p.117ステップ１の㋐では、何も処理をしていないため、葉の表からも裏からも蒸散によって水蒸気が出ていく。",
+                answer: true,
+                explanation: "ワセリン処理をしていないため、表側・裏側の両方の気孔から通常どおり蒸散が行われます。"
+            },
+            {
+                id: 8,
+                level: 3,
+                question: "今回の実験では、㋐㋑㋒㋓でワセリンをぬる部分を変えることによって、蒸散する量にどのような違いができるかを調べている。",
+                answer: true,
+                explanation: "塗る位置を変える対照実験によって、葉の表と裏のどちらで蒸散が盛んに行われているかを確かめることができます。"
+            },
+            {
+                id: 9,
+                level: 3,
+                question: "p.117のステップ②では、シリコンチューブの中に水が入っており、その中の水を植物が吸水する。",
+                answer: true,
+                explanation: "チューブの中の水を植物が吸い上げることで水位が下がり、吸水量（＝蒸散量）を数値で比較・測定できます。"
+            },
+            {
+                id: 10,
+                level: 3,
+                question: "p.118の図１の㋐では、水位が46mm変化している。",
+                answer: false,
+                explanation: "46mmではなく26mm変化しています。"
+            },
+            {
+                id: 11,
+                level: 3,
+                question: "p.118の図１の結果から、植物がシリコンチューブ内の水を吸い上げたのだと考察できる。",
+                answer: true,
+                explanation: "時間の経過とともにシリコンチューブ内の水位が減少したことから、植物が水を取り入れた（吸水した）ことが分かります。"
+            },
+            {
+                id: 12,
+                level: 3,
+                question: "p.118の図１の結果から、㋒よりも㋑の方が水位の変化量が大きい。",
+                answer: false,
+                explanation: "㋑（裏に塗る）よりも㋒（表に塗る）の方が水位の変化量が大きいです。"
+            },
+            {
+                id: 13,
+                level: 3,
+                question: "㋑と㋒の結果を比較すると、葉の表側にワセリンをぬった方が、葉の裏側にワセリンをぬったときよりも吸水量が多かったといえる。",
+                answer: true,
+                explanation: "表側に塗った㋒（裏側で蒸散）の方が水位の減少（吸水量）が大きく、裏側からより多くの蒸散が行われたことが示されます。"
+            },
+            {
+                id: 14,
+                level: 1,
+                question: "㋑と㋒の比較から、葉の裏側より表側で蒸散がさかんであるといえる。",
+                answer: false,
+                explanation: "葉の表側よりも裏側で蒸散がさかんです。"
+            },
+            {
+                id: 15,
+                level: 2,
+                question: "p.119の図２をみると、葉のウラ側の方がオモテ側よりも気孔の数が多い。",
+                answer: true,
+                explanation: "顕微鏡写真（p.119 図2）の観察からも、多くの植物で葉の裏側の方に気孔が多く存在することが確認できます。"
+            },
+            {
+                id: 16,
+                level: 1,
+                question: "p.119上段によると、蒸散では気孔から水蒸気がでていく。",
+                answer: true,
+                explanation: "気孔は表皮にある小さな穴（すきま）で、ここを通って体内の水が水蒸気として外へ出ていきます。"
+            },
+            {
+                id: 17,
+                level: 3,
+                question: "㋒の方が㋑よりも吸水の量が多いのは、㋒は気孔の多い葉の表側から蒸散することができたからだ。",
+                answer: false,
+                explanation: "気孔の多い葉の「裏側（うらがわ）」から蒸散することができたためです。"
+            },
+            {
+                id: 18,
+                level: 1,
+                question: "p.119の中段によると、吸水が主な原動力となって蒸散が起こる。",
+                answer: false,
+                explanation: "吸水ではなく、「蒸散」が主な原動力となって吸水が起こります。"
+            },
+            {
+                id: 19,
+                level: 1,
+                question: "p.119の下段によると、光があたると気孔が開き、蒸散がさかんに行われる。その結果、吸水量は減る。",
+                answer: false,
+                explanation: "蒸散が盛んになると水を引き上げる力も強くなるため、吸水量は「増える」が正しいです。"
+            },
+            {
+                id: 20,
+                level: 3,
+                question: "光があたると吸水量が増える。その理由は、光合成をするためには水が必要で、光があたっているときに水をたくさん吸水すれば、そのぶん効率的に光合成を行うことができるからだ。",
+                answer: true,
+                explanation: "光が当たると光合成が活発になり、その材料となる水を確保するために気孔が開いて蒸散と吸水が促進されます。"
+            },
+            {
+                id: 21,
+                level: 3,
+                question: "水は植物にとって、必要なものであるが、蒸散によってわざわざ大切な水を体の外に出してしまっている。この理由は、蒸散をすることで吸水を行い、土の中に含まれる栄養分も吸い上げることができるからだ。",
+                answer: true,
+                explanation: "水蒸気を出す（蒸散する）ことで大きな吸引力が生まれ、水とともに土の中の肥料分（養分）を根から吸い上げることができます。"
+            }
+        ];
+
+        // 各質問のユーザー回答状態を保持するオブジェクト
+        let userAnswers = {};
+        let currentFilter = 'all';
+
+        // 初期化処理
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestions();
+            updateProgress();
+        });
+
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            quizData.forEach((q, index) => {
+                // フィルターの適用
+                if (currentFilter !== 'all' && q.level !== currentFilter) {
+                    return;
+                }
+
+                const card = document.createElement('div');
+                card.id = `q-card-${q.id}`;
+                
+                // 回答済み判定とスタイル
+                const answered = userAnswers.hasOwnProperty(q.id);
+                const userAnswer = userAnswers[q.id];
+                const isCorrect = answered ? (userAnswer === q.answer) : null;
+
+                let cardBorderClass = "border-slate-200 bg-white";
+                if (answered) {
+                    cardBorderClass = isCorrect ? "border-2 border-emerald-400 bg-emerald-50/40" : "border-2 border-rose-400 bg-rose-50/40";
+                }
+
+                card.className = `${cardBorderClass} rounded-2xl shadow-sm p-5 transition duration-200`;
+
+                // レベル表示（星マークとレベル名）
+                let levelBadge = '';
+                if (q.level === 1) {
+                    levelBadge = `<span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-md border border-emerald-200 flex items-center gap-1"><span class="star-rating">★☆☆</span> レベル1</span>`;
+                } else if (q.level === 2) {
+                    levelBadge = `<span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-md border border-blue-200 flex items-center gap-1"><span class="star-rating">★★☆</span> レベル2</span>`;
+                } else {
+                    levelBadge = `<span class="bg-purple-100 text-purple-800 text-xs font-bold px-2.5 py-1 rounded-md border border-purple-200 flex items-center gap-1"><span class="star-rating">★★★</span> レベル3</span>`;
+                }
+
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="font-black text-slate-400 text-lg">Q.${index + 1}</span>
+                            ${levelBadge}
+                        </div>
+                        <span id="status-badge-${q.id}">
+                            ${answered ? getResultBadgeHTML(q.id) : '<span class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md">未回答</span>'}
+                        </span>
+                    </div>
+
+                    <p class="text-base sm:text-lg font-bold text-slate-800 mb-5 leading-relaxed">
+                        ${q.question}
+                    </p>
+
+                    <!-- ボタン領域 -->
+                    <div class="grid grid-cols-2 gap-3 sm:gap-4 mb-2">
+                        <button onclick="handleAnswer(${q.id}, true)" 
+                                id="btn-true-${q.id}" 
+                                class="btn-answer py-3.5 px-4 rounded-xl font-black text-lg sm:text-xl border-2 transition duration-150 flex items-center justify-center gap-2 active:scale-95
+                                ${answered && userAnswer === true ? 'border-emerald-500 bg-emerald-500 text-white shadow-md' : 'border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 text-emerald-600'}">
+                            <i class="fa-regular fa-circle"></i> ○ (正しい)
+                        </button>
+                        <button onclick="handleAnswer(${q.id}, false)" 
+                                id="btn-false-${q.id}" 
+                                class="btn-answer py-3.5 px-4 rounded-xl font-black text-lg sm:text-xl border-2 transition duration-150 flex items-center justify-center gap-2 active:scale-95
+                                ${answered && userAnswer === false ? 'border-rose-500 bg-rose-500 text-white shadow-md' : 'border-slate-200 bg-slate-50 hover:bg-rose-50 hover:border-rose-300 text-rose-600'}">
+                            <i class="fa-solid fa-xmark"></i> × (間違い)
+                        </button>
+                    </div>
+
+                    <!-- 解説・フィードバック領域 -->
+                    <div id="explanation-${q.id}" class="${answered ? '' : 'hidden'} mt-4 p-4 rounded-xl text-sm border">
+                        ${answered ? getExplanationHTML(q, userAnswer) : ''}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function handleAnswer(questionId, selectedChoice) {
+            const q = quizData.find(item => item.id === questionId);
+            userAnswers[questionId] = selectedChoice;
+
+            const isCorrect = (selectedChoice === q.answer);
+
+            // ボタンの装飾更新
+            const btnTrue = document.getElementById(`btn-true-${questionId}`);
+            const btnFalse = document.getElementById(`btn-false-${questionId}`);
+
+            if (selectedChoice === true) {
+                btnTrue.className = "btn-answer py-3.5 px-4 rounded-xl font-black text-lg sm:text-xl border-2 transition duration-150 flex items-center justify-center gap-2 border-emerald-500 bg-emerald-500 text-white shadow-md active:scale-95";
+                btnFalse.className = "btn-answer py-3.5 px-4 rounded-xl font-black text-lg sm:text-xl border-2 transition duration-150 flex items-center justify-center gap-2 border-slate-200 bg-slate-50 text-slate-300 opacity-60 active:scale-95";
+            } else {
+                btnFalse.className = "btn-answer py-3.5 px-4 rounded-xl font-black text-lg sm:text-xl border-2 transition duration-150 flex items-center justify-center gap-2 border-rose-500 bg-rose-500 text-white shadow-md active:scale-95";
+                btnTrue.className = "btn-answer py-3.5 px-4 rounded-xl font-black text-lg sm:text-xl border-2 transition duration-150 flex items-center justify-center gap-2 border-slate-200 bg-slate-50 text-slate-300 opacity-60 active:scale-95";
+            }
+
+            // カードの枠線・背景色更新
+            const card = document.getElementById(`q-card-${questionId}`);
+            if (isCorrect) {
+                card.className = "bg-emerald-50/40 rounded-2xl shadow-sm border-2 border-emerald-400 p-5 transition duration-200";
+            } else {
+                card.className = "bg-rose-50/40 rounded-2xl shadow-sm border-2 border-rose-400 p-5 transition duration-200";
+            }
+
+            // バッジ更新
+            const badgeContainer = document.getElementById(`status-badge-${questionId}`);
+            badgeContainer.innerHTML = getResultBadgeHTML(questionId);
+
+            // 解説表示更新
+            const expDiv = document.getElementById(`explanation-${questionId}`);
+            expDiv.className = "mt-4 p-4 rounded-xl text-sm border block transition duration-200";
+            expDiv.innerHTML = getExplanationHTML(q, selectedChoice);
+
+            updateProgress();
+        }
+
+        function getResultBadgeHTML(questionId) {
+            const q = quizData.find(item => item.id === questionId);
+            const userAnswer = userAnswers[questionId];
+            const isCorrect = (userAnswer === q.answer);
+
+            if (isCorrect) {
+                return `<span class="inline-flex items-center gap-1 text-xs font-bold bg-emerald-500 text-white px-2.5 py-1 rounded-md shadow-sm"><i class="fa-solid fa-circle-check"></i> 正解！</span>`;
+            } else {
+                return `<span class="inline-flex items-center gap-1 text-xs font-bold bg-rose-500 text-white px-2.5 py-1 rounded-md shadow-sm"><i class="fa-solid fa-circle-xmark"></i> 不正解</span>`;
+            }
+        }
+
+        function getExplanationHTML(q, userAnswer) {
+            const isCorrect = (userAnswer === q.answer);
+            const correctAnswerText = q.answer ? "○ (正しい)" : "× (間違い)";
+
+            let content = `
+                <div class="flex items-center gap-2 font-bold text-base mb-1 ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">
+                    <i class="fa-solid ${isCorrect ? 'fa-circle-check' : 'fa-circle-xmark'}"></i>
+                    <span>正解は「${correctAnswerText}」です</span>
+                </div>
+            `;
+
+            if (q.explanation) {
+                content += `
+                    <div class="mt-2 text-slate-700 font-bold bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-0.5"><i class="fa-solid fa-lightbulb text-amber-400 mr-1"></i>解説</span>
+                        ${q.explanation}
+                    </div>
+                `;
+            } else {
+                content += `
+                    <div class="mt-2 text-slate-600 font-medium bg-white p-3 rounded-lg border border-slate-200 text-xs">
+                        教科書（p.116～119）の該当箇所を併せて確認してみましょう。
+                    </div>
+                `;
+            }
+
+            return content;
+        }
+
+        function updateProgress() {
+            const total = quizData.length;
+            const answeredIds = Object.keys(userAnswers);
+            const answeredCount = answeredIds.length;
+
+            let correctCount = 0;
+            answeredIds.forEach(id => {
+                const q = quizData.find(item => item.id == id);
+                if (userAnswers[id] === q.answer) {
+                    correctCount++;
+                }
+            });
+
+            const percentage = total > 0 ? Math.round((answeredCount / total) * 100) : 0;
+            const accuracy = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+
+            document.getElementById('progress-text').innerHTML = `<i class="fa-solid fa-pen-to-square mr-1"></i> 進捗: ${answeredCount} / ${total}問完了`;
+            document.getElementById('score-text').innerHTML = `<i class="fa-solid fa-trophy text-amber-300 mr-1"></i> 正解数: ${correctCount}問 (${accuracy}%)`;
+
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.width = `${percentage}%`;
+        }
+
+        function filterQuestions(level) {
+            currentFilter = level;
+
+            // フィルターボタンの見た目切り替え
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = "filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg transition";
+            });
+
+            const activeBtn = document.getElementById(`btn-filter-${level}`);
+            if (activeBtn) {
+                activeBtn.className = "filter-btn active bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition shadow-sm";
+            }
+
+            renderQuestions();
+        }
+
+        function resetQuiz() {
+            userAnswers = {};
+            renderQuestions();
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
