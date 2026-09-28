@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>単元2 第2章 3 植物と呼吸(教p.114～115) ○×チェック</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f0fdf4;
+        }
+        .star-level {
+            color: #eab308;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+            animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen pb-20">
+
+    <!-- Header -->
+    <header class="bg-emerald-600 text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-4xl mx-auto px-4 py-3 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div>
+                <span class="bg-emerald-800 text-emerald-100 text-xs px-2.5 py-0.5 rounded-full font-bold inline-block mb-1">
+                    中学理科 ○×チェック
+                </span>
+                <h1 class="text-lg sm:text-xl font-extrabold tracking-tight">
+                    単元2 第2章 3 植物と呼吸 <span class="text-xs sm:text-sm font-normal text-emerald-100">(教p.114～115)</span>
+                </h1>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="resetAll()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-medium px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-rotate-right"></i> 最初からやり直す
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 pt-6">
+
+        <!-- Score & Progress Dashboard -->
+        <div class="bg-white rounded-2xl shadow-md border border-emerald-100 p-5 mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center text-2xl font-bold">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 font-medium">学習の進捗状況</div>
+                        <div class="text-lg font-bold text-slate-800" id="progress-text">0 / 16 問完了</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-6 text-center bg-slate-50 px-5 py-2.5 rounded-xl border border-slate-100">
+                    <div>
+                        <div class="text-xs text-slate-500">正解数</div>
+                        <div class="text-2xl font-black text-emerald-600" id="correct-count">0</div>
+                    </div>
+                    <div class="h-8 w-px bg-slate-200"></div>
+                    <div>
+                        <div class="text-xs text-slate-500">正解率</div>
+                        <div class="text-2xl font-black text-slate-700" id="accuracy-rate">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden shadow-inner">
+                <div id="progress-bar" class="bg-emerald-500 h-3 rounded-full transition-all duration-500 w-0"></div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap items-center gap-2 mt-5 pt-4 border-t border-slate-100 text-sm">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">レベル絞り込み:</span>
+                <button onclick="filterQuestions('all')" id="btn-filter-all" class="filter-btn active bg-slate-800 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm">
+                    すべて (16問)
+                </button>
+                <button onclick="filterQuestions(1)" id="btn-filter-1" class="filter-btn bg-slate-100 text-slate-600 hover:bg-slate-200 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all">
+                    ★ レベル1 (教科書そのまま)
+                </button>
+                <button onclick="filterQuestions(2)" id="btn-filter-2" class="filter-btn bg-slate-100 text-slate-600 hover:bg-slate-200 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all">
+                    ★★ レベル2 (教科書言い換え)
+                </button>
+                <button onclick="filterQuestions(3)" id="btn-filter-3" class="filter-btn bg-slate-100 text-slate-600 hover:bg-slate-200 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all">
+                    ★★★ レベル3 (教科書プラス)
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz List Container -->
+        <div id="quiz-container" class="space-y-4">
+            <!-- Questions rendered via JS -->
+        </div>
+
+    </main>
+
+    <!-- Modal for Completion -->
+    <div id="completion-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 text-center animate-pop">
+            <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-4xl mx-auto mb-4">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h2 class="text-2xl font-black text-slate-800 mb-2">全問チェック完了！</h2>
+            <p class="text-sm text-slate-600 mb-6">お疲れ様でした！理解度を確認して次回に活かしましょう。</p>
+            
+            <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100 mb-6">
+                <div class="text-xs text-emerald-700 font-bold mb-1">最終正解率</div>
+                <div class="text-4xl font-black text-emerald-600" id="modal-accuracy">100%</div>
+                <div class="text-xs text-slate-500 mt-1" id="modal-detail">16問中 16問正解</div>
+            </div>
+
+            <button onclick="closeModal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition-colors shadow-md">
+                問題一覧に戻る
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Questions Data based on Textbook p.114-115
+        const quizData = [
+            {
+                id: 1,
+                level: 1,
+                question: "私たち（人間）は呼吸をして二酸化炭素を放出しているね。",
+                answer: true,
+                explanation: "私たちが呼吸を行うと、空気中の酸素を取り入れ、二酸化炭素を体外に放出します。"
+            },
+            {
+                id: 2,
+                level: 1,
+                question: "p.114図１は、植物が呼吸を行うかを確かめる実験である。",
+                answer: true,
+                explanation: "図1の実験は、植物も動物（人間）と同じように呼吸を行っているかを調べるための実験です。"
+            },
+            {
+                id: 3,
+                level: 3,
+                question: "p.114図１で、㋐㋑㋒は、袋の口にストローをつけているため、袋の中の空気は外にだだもれである。",
+                answer: false,
+                explanation: "ストローを折れ曲げることで、ストローの穴をふさぎ、密閉しています。"
+            },
+            {
+                id: 4,
+                level: 2,
+                question: "㋐の条件は、「光あり」「植物あり」である。",
+                answer: true,
+                explanation: "㋐は光が当たるところに植物入りのポリエチレン袋を置いており、「光あり」「植物あり」の条件です。"
+            },
+            {
+                id: 5,
+                level: 2,
+                question: "㋑の条件は「光あり」「植物あり」である。",
+                answer: false,
+                explanation: "正しくは、「光なし」「植物あり」です。㋑は光の当たらない暗い場所に置かれています。"
+            },
+            {
+                id: 6,
+                level: 3,
+                question: "p.114の図１の②で、もしも石灰水が白くにごれば、袋の中に酸素ができたということである。",
+                answer: false,
+                explanation: "石灰水が白くにごる、なので、酸素ではなく、二酸化炭素ができたということです。"
+            },
+            {
+                id: 7,
+                level: 3,
+                question: "p.114の図１で、㋐と㋑を比べることで、植物の有無による違いを観察できる。",
+                answer: false,
+                explanation: "㋐と㋑の違いが何かというと「光が当たっている」か「光があたっていない」かである。それ以外の条件は同じ。なので、植物の有無ではなく、光の有無による違いを観察できる。"
+            },
+            {
+                id: 8,
+                level: 2,
+                question: "p.114の中段の文章から、結果をまとめると、㋐㋒では石灰水が白くにごらなかったが、㋑では石灰水は白くにごった。",
+                answer: true,
+                explanation: "光が当たらない㋑の袋の中でのみ二酸化炭素が増えたため、石灰水が白くにごりました。"
+            },
+            {
+                id: 9,
+                level: 3,
+                question: "㋐と㋑の比較から、光があたっていないときに、二酸化炭素が増えていることがわかる。",
+                answer: true,
+                explanation: "㋐（光あり）では石灰水がにごらず、㋑（光なし）でのみ白くにごったことから、光があたっていないときに二酸化炭素が発生・増加したことが分かります。"
+            },
+            {
+                id: 10,
+                level: 3,
+                question: "結論、植物は私たちとは違って、呼吸をしていない。",
+                answer: false,
+                explanation: "実験から、植物も、私たちと同じように、二酸化炭素を放出していることがわかる。そのため、結論、植物は私たちと同じように呼吸をしている。"
+            },
+            {
+                id: 11,
+                level: 1,
+                question: "p.115の中段によると、植物の葉では、光の当たる昼は、光合成が行われ、呼吸は行われない。",
+                answer: false,
+                explanation: "光のあたる昼は、光合成も、呼吸も両方行われている。私たち人間も、昼夜問わず呼吸をしているので、それと同じです。"
+            },
+            {
+                id: 12,
+                level: 1,
+                question: "p.115の中段によると、植物の葉では、光の当たらない夜は、光合成は行われず呼吸だけが行われる。",
+                answer: true,
+                explanation: "夜は光がないため光合成は行われず、生きるための「呼吸」のみが行われます。"
+            },
+            {
+                id: 13,
+                level: 3,
+                question: "私達人間も、呼吸は昼も夜も行って、酸素を得て活動を行っているため、その点は植物も同じである。",
+                answer: true,
+                explanation: "植物も生き物なので、昼夜関係なく絶えず呼吸をして生命活動を行っています。"
+            },
+            {
+                id: 14,
+                level: 3,
+                question: "p.115上の図２の矢印の太さは、出入りする気体の量を表している。昼は光合成も呼吸も行われているが、光合成によって吸収される二酸化炭素の方が、呼吸によって放出される二酸化炭素の量よりも多い。なので、昼は二酸化炭素が放出されていないように見える。",
+                answer: true,
+                explanation: "昼は光合成の速度が呼吸の速度を上回るため、全体で見ると二酸化炭素を吸収し、酸素を放出しているように見えます。"
+            },
+            {
+                id: 15,
+                level: 3,
+                question: "p.115上の図２によると、夜は呼吸のみが行われているため、植物からは酸素だけが放出される。",
+                answer: false,
+                explanation: "「酸素」ではなく、「二酸化炭素」だけが放出される。"
+            },
+            {
+                id: 16,
+                level: 3,
+                question: "p.112右上の図１で、試験管CのBTB溶液は黄色になった。このことから、光が当たらないとき、呼吸だけをしているため、二酸化炭素が増えたのだといえる。",
+                answer: true,
+                explanation: "BTB溶液は二酸化炭素が増えて酸性になると黄色になります。暗所では光合成が行われず呼吸のみを行うため、二酸化炭素が増加します。"
+            }
+        ];
+
+        // Application State
+        let userAnswers = {};
+        let currentFilter = 'all';
+
+        // Helper: Get stars HTML according to level
+        function getStarsHTML(level) {
+            let stars = '';
+            for (let i = 0; i < level; i++) {
+                stars += '★';
+            }
+            let levelLabel = '';
+            if (level === 1) levelLabel = 'レベル1 (教科書そのまま)';
+            if (level === 2) levelLabel = 'レベル2 (教科書言い換え)';
+            if (level === 3) levelLabel = 'レベル3 (教科書プラス)';
+
+            return `<span class="star-level font-bold tracking-widest">${stars}</span> <span class="text-xs text-slate-500 font-semibold">(${levelLabel})</span>`;
+        }
+
+        // Render Quiz List
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            const filteredQuestions = quizData.filter(q => {
+                if (currentFilter === 'all') return true;
+                return q.level === parseInt(currentFilter);
+            });
+
+            if (filteredQuestions.length === 0) {
+                container.innerHTML = `<div class="bg-white p-8 rounded-xl text-center text-slate-500 font-medium">該当する問題はありません。</div>`;
+                return;
+            }
+
+            filteredQuestions.forEach((q) => {
+                const isAnswered = userAnswers.hasOwnProperty(q.id);
+                const userAnswer = userAnswers[q.id];
+                const isCorrect = isAnswered && (userAnswer === q.answer);
+
+                let cardBorderClass = 'border-slate-200';
+                let statusBadge = '';
+
+                if (isAnswered) {
+                    if (isCorrect) {
+                        cardBorderClass = 'border-emerald-500 bg-emerald-50/40 ring-1 ring-emerald-400';
+                        statusBadge = `<span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-sm"><i class="fa-solid fa-circle-check text-emerald-600"></i> 正解！</span>`;
+                    } else {
+                        cardBorderClass = 'border-rose-400 bg-rose-50/40 ring-1 ring-rose-300';
+                        statusBadge = `<span class="bg-rose-100 text-rose-700 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-sm"><i class="fa-solid fa-circle-xmark text-rose-600"></i> 不正解</span>`;
+                    }
+                }
+
+                const cardHTML = `
+                    <div class="bg-white rounded-xl shadow-sm border ${cardBorderClass} p-5 transition-all duration-200" id="question-card-${q.id}">
+                        <div class="flex justify-between items-start gap-2 mb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-slate-800 text-white font-black text-xs px-2.5 py-1 rounded-md">問 ${q.id}</span>
+                                <div class="text-xs">${getStarsHTML(q.level)}</div>
+                            </div>
+                            <div>${statusBadge}</div>
+                        </div>
+
+                        <p class="text-base sm:text-lg font-bold text-slate-800 mb-5 leading-relaxed">${q.question}</p>
+
+                        <!-- Answer Buttons -->
+                        <div class="grid grid-cols-2 gap-3 mb-2">
+                            <button onclick="handleAnswer(${q.id}, true)" 
+                                class="py-3 px-4 rounded-xl border-2 text-center font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95
+                                ${isAnswered && userAnswer === true ? (q.answer === true ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-rose-600 text-white border-rose-600 shadow-md') : 'bg-white hover:bg-emerald-50 border-slate-200 text-emerald-600 hover:border-emerald-300'}">
+                                <i class="fa-regular fa-circle text-xl"></i> ○ (正しい)
+                            </button>
+                            <button onclick="handleAnswer(${q.id}, false)" 
+                                class="py-3 px-4 rounded-xl border-2 text-center font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95
+                                ${isAnswered && userAnswer === false ? (q.answer === false ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-rose-600 text-white border-rose-600 shadow-md') : 'bg-white hover:bg-rose-50 border-slate-200 text-rose-500 hover:border-rose-300'}">
+                                <i class="fa-solid fa-xmark text-xl"></i> × (間違い)
+                            </button>
+                        </div>
+
+                        <!-- Feedback & Explanation Box -->
+                        ${isAnswered ? `
+                            <div class="mt-4 pt-4 border-t border-slate-200/80 animate-pop">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs font-black tracking-wider px-2.5 py-0.5 rounded ${isCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
+                                        答え: ${q.answer ? '○ (正しい)' : '× (間違い)'}
+                                    </span>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3.5 text-sm text-slate-700 border border-slate-200/80">
+                                    <span class="font-bold text-slate-900 block mb-1 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-lightbulb text-amber-500"></i> 解説
+                                    </span>
+                                    <p class="leading-relaxed">${q.explanation ? q.explanation : '解説はありません。'}</p>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+
+                container.insertAdjacentHTML('beforeend', cardHTML);
+            });
+
+            updateProgress();
+        }
+
+        // Handle User Answer Click
+        function handleAnswer(questionId, answerBool) {
+            const isFirstTime = !userAnswers.hasOwnProperty(questionId);
+            userAnswers[questionId] = answerBool;
+
+            renderQuiz();
+
+            // Check if all questions are completed
+            if (Object.keys(userAnswers).length === quizData.length && isFirstTime) {
+                setTimeout(showCompletionModal, 500);
+            }
+        }
+
+        // Update Dashboard Statistics
+        function updateProgress() {
+            const totalQuestions = quizData.length;
+            const answeredCount = Object.keys(userAnswers).length;
+            let correctCount = 0;
+
+            quizData.forEach(q => {
+                if (userAnswers.hasOwnProperty(q.id) && userAnswers[q.id] === q.answer) {
+                    correctCount++;
+                }
+            });
+
+            const accuracy = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+            const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
+
+            document.getElementById('progress-text').innerText = `${answeredCount} / ${totalQuestions} 問完了`;
+            document.getElementById('correct-count').innerText = correctCount;
+            document.getElementById('accuracy-rate').innerText = `${accuracy}%`;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+        }
+
+        // Filter Questions by Level
+        function filterQuestions(level) {
+            currentFilter = level;
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-800', 'text-white', 'shadow-sm');
+                btn.classList.add('bg-slate-100', 'text-slate-600');
+            });
+
+            const activeBtn = document.getElementById(`btn-filter-${level}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-100', 'text-slate-600');
+                activeBtn.classList.add('bg-slate-800', 'text-white', 'shadow-sm');
+            }
+
+            renderQuiz();
+        }
+
+        // Show Completion Modal
+        function showCompletionModal() {
+            let correctCount = 0;
+            quizData.forEach(q => {
+                if (userAnswers[q.id] === q.answer) correctCount++;
+            });
+            const accuracy = Math.round((correctCount / quizData.length) * 100);
+
+            document.getElementById('modal-accuracy').innerText = `${accuracy}%`;
+            document.getElementById('modal-detail').innerText = `16問中 ${correctCount}問正解`;
+            document.getElementById('completion-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('completion-modal').classList.add('hidden');
+        }
+
+        // Reset Quiz
+        function resetAll() {
+            userAnswers = {};
+            currentFilter = 'all';
+            filterQuestions('all');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // On Load Initializer
+        window.onload = function() {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>
